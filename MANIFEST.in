@@ -1,0 +1,12 @@
+include versioneer.py pytest_mpi/_version.py
+include README.md
+include pypi-intro.rst
+include LICENSE.txt
+recursive-include docs *
+recursive-exclude docs/_build *
+include doc-requirements.txt
+include test-requirements.txt
+recursive-include tests *.py
+include pylintrc
+include tox.ini
+exclude TODO

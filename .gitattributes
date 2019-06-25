@@ -1,0 +1,1 @@
+pytest_mpi/_version.py export-subst
