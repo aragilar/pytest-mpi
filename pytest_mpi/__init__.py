@@ -25,19 +25,6 @@ class MPIPlugin(object):
         only_mpi = config.getoption(ONLY_MPI_ARG)
         return with_mpi or only_mpi
 
-    def pytest_addoption(self, parser):
-        """
-        Add pytest-mpi options to pytest cli
-        """
-        parser.addoption(
-            WITH_MPI_ARG, action="store_true", default=False,
-            help="Run MPI tests, this should be paired with mpirun."
-        )
-        parser.addoption(
-            ONLY_MPI_ARG, action="store_true", default=False,
-            help="Run *only* MPI tests, this should be paired with mpirun."
-        )
-
     def pytest_collection_modifyitems(self, config, items):
         """
         Skip tests depending on what options are chosen
@@ -126,3 +113,17 @@ def pytest_configure(config):
         "markers", "mpi_break: Tests that cannot run under MPI/mpirun"
     )
     config.pluginmanager.register(MPIPlugin(), "pytest_mpi")
+
+
+def pytest_addoption(parser):
+    """
+    Add pytest-mpi options to pytest cli
+    """
+    parser.addoption(
+        WITH_MPI_ARG, action="store_true", default=False,
+        help="Run MPI tests, this should be paired with mpirun."
+    )
+    parser.addoption(
+        ONLY_MPI_ARG, action="store_true", default=False,
+        help="Run *only* MPI tests, this should be paired with mpirun."
+    )
