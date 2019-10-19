@@ -162,7 +162,7 @@ def mpi_file_name(tmpdir, request):
 
 
 @pytest.fixture
-def mpi_tmpdir(tmpdir, request):
+def mpi_tmpdir(tmpdir):
     """
     Wraps `pytest.tmpdir` so that it can be used under MPI from all MPI
     processes.
@@ -186,7 +186,7 @@ def mpi_tmpdir(tmpdir, request):
 
 
 @pytest.fixture
-def mpi_tmp_path(tmp_path, request):
+def mpi_tmp_path(tmp_path):
     """
     Wraps `pytest.tmp_path` so that it can be used under MPI from all MPI
     processes.
