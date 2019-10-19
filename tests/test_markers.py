@@ -1,7 +1,7 @@
 import py
 import pytest
 
-MPI_ARGS = ("mpirun", "-n", "2")
+MPI_ARGS = ("mpirun", "-n")
 MPI_TEST_CODE = """
     import pytest
 
@@ -18,6 +18,16 @@ MPI_TEST_CODE = """
         comm = MPI.COMM_WORLD
 
         assert comm.size >= 2
+
+    @pytest.mark.mpi(2)
+    def test_size_fail_pos():
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        assert comm.size > 0
+
+    def test_no_mpi():
+        assert True
 """
 MPI_SKIP_TEST_CODE = """
     import pytest
@@ -39,7 +49,7 @@ MPI_XFAIL_TEST_CODE = """
             assert True
 """
 
-def run_under_mpi(testdir_obj, *args, timeout=None):
+def run_under_mpi(testdir_obj, *args, timeout=None, mpi_procs=2):
     """
     Based on testdir.runpytest_subprocess
     """
@@ -55,7 +65,7 @@ def run_under_mpi(testdir_obj, *args, timeout=None):
     plugins = [x for x in testdir_obj.plugins if isinstance(x, str)]
     if plugins:
         args = ("-p", plugins[0]) + args
-    args = MPI_ARGS + testdir_obj._getpytestargs() + args
+    args = MPI_ARGS + (str(mpi_procs),) + testdir_obj._getpytestargs() + args
     return testdir_obj.run(*args, timeout=timeout)
 
 
@@ -66,17 +76,27 @@ def test_mpi(testdir):
     result = testdir.runpytest()
 
     # check that all 4 tests passed
-    result.assert_outcomes(skipped=2)
+    result.assert_outcomes(skipped=3, passed=1)
 
 
-def test_mpi_under_mpi(testdir):
+def test_mpi_with_mpi(testdir):
     testdir.makepyfile(MPI_TEST_CODE)
 
     # run all tests with pytest
     result = run_under_mpi(testdir, "--with-mpi")
 
     # check that all 4 tests passed
-    result.assert_outcomes(passed=2)
+    result.assert_outcomes(passed=3, error=1)
+
+
+def test_mpi_only_mpi(testdir):
+    testdir.makepyfile(MPI_TEST_CODE)
+
+    # run all tests with pytest
+    result = run_under_mpi(testdir, "--only-mpi")
+
+    # check that all 4 tests passed
+    result.assert_outcomes(passed=2, error=1, skipped=1)
 
 
 def test_mpi_skip(testdir):
