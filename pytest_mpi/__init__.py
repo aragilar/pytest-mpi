@@ -33,7 +33,7 @@ MPI_MARKERS = {
     MPIMarkerEnum.mpi_break: pytest.mark.skip(
         reason="test does not work under mpi"
     ),
-    MPIMarkerEnum.mpi_xfail: pytest.mark.skip(
+    MPIMarkerEnum.mpi_xfail: pytest.mark.xfail(
         reason="test fails under mpi"
     ),
 }
@@ -97,7 +97,7 @@ class MPIPlugin(object):
                 terminalreporter.write("size: {}\n".format(comm.size))
 
                 terminalreporter.write("MPI version: {}\n".format(
-                    '.'.join(MPI.Get_version())
+                    '.'.join([str(v) for v in MPI.Get_version()])
                 ))
                 terminalreporter.write("MPI library version: {}\n".format(
                     MPI.Get_library_version()
@@ -105,7 +105,7 @@ class MPIPlugin(object):
 
                 vendor, vendor_version = MPI.get_vendor()
                 terminalreporter.write("MPI vendor: {} {}\n".format(
-                    vendor, '.'.join(vendor_version)
+                    vendor, '.'.join([str(v) for v in vendor_version])
                 ))
 
                 terminalreporter.write("mpi4py rc: \n")
