@@ -12,28 +12,26 @@ non-MPI parts of a test suite without having to worry about installing MPI and
 mpi4py.
 
 An simple test using the `mpi` marker managed by `pytest-mpi` is:
-.. code-block::
+
+.. code-block:: python
 
     import pytest
-
     @pytest.mark.mpi
     def test_size():
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
-
         assert comm.size > 0
 
 This test will be automatically be skipped unless `--with-mpi` is used. We can
 also specify a minimum number of processes required to run the test:
-.. code-block::
+
+.. code-block:: python
 
     import pytest
-
     @pytest.mark.mpi(min_size=2)
     def test_size():
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
-
         assert comm.size >= 2
 
 There are also `mpi_skip`, for when a test should not be run under MPI (e.g. it

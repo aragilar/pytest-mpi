@@ -11,3 +11,6 @@ include pylintrc
 include tox.ini
 exclude TODO
 prune **/__pycache__
+prune **/*.pyc
+prune **/*.swp
+prune **/*.swo
