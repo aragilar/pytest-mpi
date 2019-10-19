@@ -86,13 +86,33 @@ class MPIPlugin(object):
         if self._testing_mpi(config):
             terminalreporter.section("MPI Information")
             try:
-                from mpi4py import MPI
+                from mpi4py import MPI, rc, get_config
             except ImportError:
                 terminalreporter.write("Unable to import mpi4py")
             else:
                 comm = MPI.COMM_WORLD
                 terminalreporter.write("rank: {}\n".format(comm.rank))
                 terminalreporter.write("size: {}\n".format(comm.size))
+
+                terminalreporter.write("MPI version: {}\n".format(
+                    '.'.join(MPI.Get_version())
+                ))
+                terminalreporter.write("MPI library version: {}\n".format(
+                    MPI.Get_library_version()
+                ))
+
+                vendor, vendor_version = MPI.get_vendor()
+                terminalreporter.write("MPI vendor: {} {}\n".format(
+                    vendor, '.'.join(vendor_version)
+                ))
+
+                terminalreporter.write("mpi4py rc: \n")
+                for name, value in vars(rc).items():
+                    terminalreporter.write(" {}: {}\n".format(name, value))
+
+                terminalreporter.write("mpi4py config:\n")
+                for name, value in get_config().items():
+                    terminalreporter.write(" {}: {}\n".format(name, value))
 
     def pytest_runtest_setup(self, item):
         """
