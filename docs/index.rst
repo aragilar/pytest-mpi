@@ -25,6 +25,7 @@ very much welcomed.
    usage
    markers
    fixtures
+   changelog
 
 
 

@@ -2,7 +2,9 @@
 .tox
 *.egg-info
 *.swp
+*.swo
 _build
 .coverage
 dist
 build
+__pycache__

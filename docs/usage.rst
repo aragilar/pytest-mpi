@@ -11,7 +11,10 @@ Note that by default the MPI tests are not run—this makes it easy to run the
 non-MPI parts of a test suite without having to worry about installing MPI and
 mpi4py.
 
-An simple test using the `mpi` marker managed by `pytest-mpi` is::
+An simple test using the `mpi` marker managed by `pytest-mpi` is:
+.. code-block::
+
+    import pytest
 
     @pytest.mark.mpi
     def test_size():
@@ -21,7 +24,10 @@ An simple test using the `mpi` marker managed by `pytest-mpi` is::
         assert comm.size > 0
 
 This test will be automatically be skipped unless `--with-mpi` is used. We can
-also specify a minimum number of processes required to run the test::
+also specify a minimum number of processes required to run the test:
+.. code-block::
+
+    import pytest
 
     @pytest.mark.mpi(min_size=2)
     def test_size():

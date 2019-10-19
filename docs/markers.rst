@@ -13,6 +13,8 @@ Markers
 
         .. code-block:: python
 
+            import pytest
+
             @pytest.mark.mpi(minsize=4)
             def test_mpi_feature():
                 ...
