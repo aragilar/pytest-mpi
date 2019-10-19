@@ -1,6 +1,7 @@
 .cache
 .tox
 *.egg-info
+*.swp
 _build
 .coverage
 dist

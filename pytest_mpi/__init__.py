@@ -2,7 +2,9 @@
 Support for testing python code with MPI and pytest
 """
 from enum import Enum
+from pathlib import Path
 
+import py
 import pytest
 
 from ._version import get_versions
@@ -138,7 +140,11 @@ class MPIPlugin(object):
 @pytest.fixture
 def mpi_file_name(tmpdir, request):
     """
-    Provides a tmpfile name under mpi
+    Provides a temporary file name which can be used under MPI from all MPI
+    processes.
+
+    This function avoids the need to ensure that only one process handles the
+    naming of temporary files.
     """
     try:
         from mpi4py import MPI
@@ -155,6 +161,54 @@ def mpi_file_name(tmpdir, request):
     return name
 
 
+@pytest.fixture
+def mpi_tmpdir(tmpdir, request):
+    """
+    Wraps `pytest.tmpdir` so that it can be used under MPI from all MPI
+    processes.
+
+    This function avoids the need to ensure that only one process handles the
+    naming of temporary folders.
+    """
+    try:
+        from mpi4py import MPI
+    except ImportError:
+        pytest.fail("mpi4py needs to be installed to run this test")
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    # we only want to put the file inside one tmpdir, this creates the name
+    # under one process, and passes it on to the others
+    name = str(tmpdir) if rank == 0 else None
+    name = comm.bcast(name, root=0)
+    return py.path.local(name)
+
+
+@pytest.fixture
+def mpi_tmp_path(tmp_path, request):
+    """
+    Wraps `pytest.tmp_path` so that it can be used under MPI from all MPI
+    processes.
+
+    This function avoids the need to ensure that only one process handles the
+    naming of temporary folders.
+    """
+    try:
+        from mpi4py import MPI
+    except ImportError:
+        pytest.fail("mpi4py needs to be installed to run this test")
+
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    # we only want to put the file inside one tmpdir, this creates the name
+    # under one process, and passes it on to the others
+    name = str(tmp_path) if rank == 0 else None
+    name = comm.bcast(name, root=0)
+    return Path(name)
+
+
 def pytest_configure(config):
     """
     Add pytest-mpi to pytest (see pytest docs for more info)
@@ -163,7 +217,14 @@ def pytest_configure(config):
         "markers", "mpi: Tests that require being run with MPI/mpirun"
     )
     config.addinivalue_line(
-        "markers", "mpi_break: Tests that cannot run under MPI/mpirun"
+        "markers", "mpi_break: Tests that cannot run under MPI/mpirun "
+        "(deprecated)"
+    )
+    config.addinivalue_line(
+        "markers", "mpi_skip: Tests to skip when running MPI/mpirun"
+    )
+    config.addinivalue_line(
+        "markers", "mpi_xfail: Tests that fail when run under MPI/mpirun"
     )
     config.pluginmanager.register(MPIPlugin(), "pytest_mpi")
 
