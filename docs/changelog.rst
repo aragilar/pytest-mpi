@@ -5,6 +5,8 @@ Changelog
 ---
 * Fixed pylint failures
 * Added testing of examples in documentation
+* Added proper tests
+* Fix bugs found via tests
 
 0.2
 ---
