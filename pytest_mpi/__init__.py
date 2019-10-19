@@ -1,6 +1,8 @@
 """
 Support for testing python code with MPI and pytest
 """
+from enum import Enum
+
 import pytest
 
 from ._version import get_versions
@@ -10,6 +12,29 @@ del get_versions
 
 WITH_MPI_ARG = "--with-mpi"
 ONLY_MPI_ARG = "--only-mpi"
+
+
+class MPIMarkerEnum(str, Enum):
+    """
+    Enum containing all the markers used by pytest-mpi
+    """
+    mpi = "mpi"
+    mpi_skip = "mpi_skip"
+    mpi_xfail = "mpi_xfail"
+    mpi_break = "mpi_break"
+
+
+MPI_MARKERS = {
+    MPIMarkerEnum.mpi_skip: pytest.mark.skip(
+        reason="test does not work under mpi"
+    ),
+    MPIMarkerEnum.mpi_break: pytest.mark.skip(
+        reason="test does not work under mpi"
+    ),
+    MPIMarkerEnum.mpi_xfail: pytest.mark.skip(
+        reason="test fails under mpi"
+    ),
+}
 
 
 class MPIPlugin(object):
@@ -25,6 +50,14 @@ class MPIPlugin(object):
         only_mpi = config.getoption(ONLY_MPI_ARG)
         return with_mpi or only_mpi
 
+    def _add_markers(self, item):
+        """
+        Add markers to tests when run under MPI.
+        """
+        for label, marker in MPI_MARKERS.items():
+            if label in item.keywords:
+                item.add_marker(marker)
+
     def pytest_collection_modifyitems(self, config, items):
         """
         Skip tests depending on what options are chosen
@@ -32,15 +65,15 @@ class MPIPlugin(object):
         with_mpi = config.getoption(WITH_MPI_ARG)
         only_mpi = config.getoption(ONLY_MPI_ARG)
         for item in items:
-            if with_mpi and "mpi_break" in item.keywords:
-                item.add_marker(
-                    pytest.mark.skip(reason="test does not work under mpi")
-                )
-            elif only_mpi and "mpi" not in item.keywords:
+            if with_mpi:
+                self._add_markers(item)
+            elif only_mpi and MPIMarkerEnum.mpi not in item.keywords:
                 item.add_marker(
                     pytest.mark.skip(reason="test does not use mpi")
                 )
-            elif not (with_mpi or only_mpi) and "mpi" in item.keywords:
+            elif not (with_mpi or only_mpi) and (
+                    MPIMarkerEnum.mpi in item.keywords
+            ):
                 item.add_marker(
                     pytest.mark.skip(reason="need --with-mpi option to run")
                 )
