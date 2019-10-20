@@ -1,14 +1,3 @@
-import py
-import pytest
-
-
-try:
-    import mpi4py
-except ImportError:
-    mpi4py = None
-
-
-MPI_ARGS = ("mpirun", "-n")
 MPI_TEST_CODE = """
     import pytest
 
@@ -63,20 +52,6 @@ MPI_XFAIL_TEST_CODE = """
             assert True
 """
 
-def run_under_mpi(testdir_obj, *args, timeout=None, mpi_procs=2):
-    """
-    Based on testdir.runpytest_subprocess
-    """
-    p = py.path.local.make_numbered_dir(
-        prefix="runpytest-", keep=None, rootdir=testdir_obj.tmpdir
-    )
-    args = ("--basetemp=%s" % p,) + args
-    plugins = [x for x in testdir_obj.plugins if isinstance(x, str)]
-    if plugins:
-        args = ("-p", plugins[0]) + args
-    args = MPI_ARGS + (str(mpi_procs),) + testdir_obj._getpytestargs() + args
-    return testdir_obj.run(*args, timeout=timeout)
-
 
 def test_mpi(testdir):
     testdir.makepyfile(MPI_TEST_CODE)
@@ -86,26 +61,26 @@ def test_mpi(testdir):
     result.assert_outcomes(skipped=4, passed=1)
 
 
-def test_mpi_with_mpi(testdir):
-    testdir.makepyfile(MPI_TEST_CODE)
+def test_mpi_with_mpi(mpi_testdir, has_mpi4py):
+    mpi_testdir.makepyfile(MPI_TEST_CODE)
 
-    result = run_under_mpi(testdir, "--with-mpi")
+    result = mpi_testdir.runpytest("--with-mpi")
 
-    if mpi4py is None:
-        result.assert_outcomes(passed=1, error=4)
-    else:
+    if has_mpi4py:
         result.assert_outcomes(passed=3, error=1, skipped=1)
-
-
-def test_mpi_only_mpi(testdir):
-    testdir.makepyfile(MPI_TEST_CODE)
-
-    result = run_under_mpi(testdir, "--only-mpi")
-
-    if mpi4py is None:
-        result.assert_outcomes(error=4, skipped=1)
     else:
+        result.assert_outcomes(passed=1, error=4)
+
+
+def test_mpi_only_mpi(mpi_testdir, has_mpi4py):
+    mpi_testdir.makepyfile(MPI_TEST_CODE)
+
+    result = mpi_testdir.runpytest("--only-mpi")
+
+    if has_mpi4py:
         result.assert_outcomes(passed=2, error=1, skipped=2)
+    else:
+        result.assert_outcomes(error=4, skipped=1)
 
 
 def test_mpi_skip(testdir):
@@ -116,10 +91,10 @@ def test_mpi_skip(testdir):
     result.assert_outcomes(passed=1)
 
 
-def test_mpi_skip_under_mpi(testdir):
-    testdir.makepyfile(MPI_SKIP_TEST_CODE)
+def test_mpi_skip_under_mpi(mpi_testdir):
+    mpi_testdir.makepyfile(MPI_SKIP_TEST_CODE)
 
-    result = run_under_mpi(testdir, "--with-mpi")
+    result = mpi_testdir.runpytest("--with-mpi")
 
     result.assert_outcomes(skipped=1)
 
@@ -132,12 +107,12 @@ def test_mpi_xfail(testdir):
     result.assert_outcomes(passed=1)
 
 
-def test_mpi_xfail_under_mpi(testdir):
-    testdir.makepyfile(MPI_XFAIL_TEST_CODE)
+def test_mpi_xfail_under_mpi(mpi_testdir, has_mpi4py):
+    mpi_testdir.makepyfile(MPI_XFAIL_TEST_CODE)
 
-    result = run_under_mpi(testdir, "--with-mpi")
+    result = mpi_testdir.runpytest("--with-mpi")
 
-    if mpi4py is None:
-        result.assert_outcomes(xpassed=1)
-    else:
+    if has_mpi4py:
         result.assert_outcomes(xfailed=1)
+    else:
+        result.assert_outcomes(xpassed=1)
