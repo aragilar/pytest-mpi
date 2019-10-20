@@ -24,10 +24,13 @@ class MPITestdir(Testdir):
         if method == "inprocess":
             log.warn("To run the MPI tests, you need to use subprocesses")
 
-    def runpytest_subprocess(self, *args, timeout=None, mpi_procs=2):
+    def runpytest_subprocess(
+        self, *args, timeout=60, mpi_procs=2, max_retries=5,
+    ):
         """
         Based on testdir.runpytest_subprocess
         """
+        retries = 0
         p = py.path.local.make_numbered_dir(
             prefix="runpytest-", keep=None, rootdir=self.tmpdir
         )
@@ -36,7 +39,14 @@ class MPITestdir(Testdir):
         if plugins:
             args = ("-p", plugins[0]) + args
         args = MPI_ARGS + (str(mpi_procs),) + self._getpytestargs() + args
-        return self.run(*args, timeout=timeout)
+        while retries < max_retries:
+            try:
+                return self.run(*args, timeout=timeout)
+            except self.TimeoutExpired as e:
+                retries += 1
+                if retries >= max_retries:
+                    raise
+        raise e
 
     def runpytest(self, *args, **kwargs):
         return self.runpytest_subprocess(*args, **kwargs)
