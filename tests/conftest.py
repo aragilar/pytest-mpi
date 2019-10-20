@@ -25,7 +25,7 @@ class MPITestdir(Testdir):
             log.warn("To run the MPI tests, you need to use subprocesses")
 
     def runpytest_subprocess(
-        self, *args, timeout=60, mpi_procs=2, max_retries=5,
+        self, *args, timeout=60, mpi_procs=2, max_retries=5
     ):
         """
         Based on testdir.runpytest_subprocess
