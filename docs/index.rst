@@ -26,6 +26,7 @@ very much welcomed.
    markers
    fixtures
    changelog
+   contributing
 
 
 
