@@ -1,6 +1,13 @@
 import py
 import pytest
 
+
+try:
+    import mpi4py
+except ImportError:
+    mpi4py = None
+
+
 MPI_ARGS = ("mpirun", "-n")
 MPI_TEST_CODE = """
     import pytest
@@ -53,11 +60,6 @@ def run_under_mpi(testdir_obj, *args, timeout=None, mpi_procs=2):
     """
     Based on testdir.runpytest_subprocess
     """
-    try:
-        import mpi4py
-    except ImportError:
-        pytest.skip("Need to install mpi4py to run this test")
-
     p = py.path.local.make_numbered_dir(
         prefix="runpytest-", keep=None, rootdir=testdir_obj.tmpdir
     )
@@ -72,68 +74,63 @@ def run_under_mpi(testdir_obj, *args, timeout=None, mpi_procs=2):
 def test_mpi(testdir):
     testdir.makepyfile(MPI_TEST_CODE)
 
-    # run all tests with pytest
     result = testdir.runpytest()
 
-    # check that all 4 tests passed
     result.assert_outcomes(skipped=3, passed=1)
 
 
 def test_mpi_with_mpi(testdir):
     testdir.makepyfile(MPI_TEST_CODE)
 
-    # run all tests with pytest
     result = run_under_mpi(testdir, "--with-mpi")
 
-    # check that all 4 tests passed
-    result.assert_outcomes(passed=3, error=1)
+    if mpi4py is None:
+        result.assert_outcomes(passed=1, error=3)
+    else:
+        result.assert_outcomes(passed=3, error=1)
 
 
 def test_mpi_only_mpi(testdir):
     testdir.makepyfile(MPI_TEST_CODE)
 
-    # run all tests with pytest
     result = run_under_mpi(testdir, "--only-mpi")
 
-    # check that all 4 tests passed
-    result.assert_outcomes(passed=2, error=1, skipped=1)
+    if mpi4py is None:
+        result.assert_outcomes(error=3, skipped=1)
+    else:
+        result.assert_outcomes(passed=2, error=1, skipped=1)
 
 
 def test_mpi_skip(testdir):
     testdir.makepyfile(MPI_SKIP_TEST_CODE)
 
-    # run all tests with pytest
     result = testdir.runpytest()
 
-    # check that all 4 tests passed
     result.assert_outcomes(passed=1)
 
 
 def test_mpi_skip_under_mpi(testdir):
     testdir.makepyfile(MPI_SKIP_TEST_CODE)
 
-    # run all tests with pytest
     result = run_under_mpi(testdir, "--with-mpi")
 
-    # check that all 4 tests passed
     result.assert_outcomes(skipped=1)
 
 
 def test_mpi_xfail(testdir):
     testdir.makepyfile(MPI_XFAIL_TEST_CODE)
 
-    # run all tests with pytest
     result = testdir.runpytest()
 
-    # check that all 4 tests passed
     result.assert_outcomes(passed=1)
 
 
 def test_mpi_xfail_under_mpi(testdir):
     testdir.makepyfile(MPI_XFAIL_TEST_CODE)
 
-    # run all tests with pytest
     result = run_under_mpi(testdir, "--with-mpi")
 
-    # check that all 4 tests passed
-    result.assert_outcomes(xfailed=1)
+    if mpi4py is None:
+        result.assert_outcomes(xpassed=1)
+    else:
+        result.assert_outcomes(xfailed=1)

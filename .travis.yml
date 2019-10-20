@@ -25,6 +25,18 @@ matrix:
     - python: 3.8
       env:
       - TOXENV=py38
+    - python: 3.5
+      env:
+      - TOXENV=py35-mpi
+    - python: 3.6
+      env:
+      - TOXENV=py36-mpi
+    - python: 3.7
+      env:
+      - TOXENV=py37-mpi
+    - python: 3.8
+      env:
+      - TOXENV=py38-mpi
     - python: 3.7
       env:
       - TOXENV=flake8
