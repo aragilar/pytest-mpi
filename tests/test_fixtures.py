@@ -1,7 +1,6 @@
 MPI_FILE_NAME_TEST_CODE = """
     import pytest
 
-    @pytest.mark.mpi
     def test_file_name(mpi_file_name):
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
@@ -18,7 +17,6 @@ MPI_FILE_NAME_TEST_CODE = """
 MPI_TMPDIR_TEST_CODE = """
     import pytest
 
-    @pytest.mark.mpi
     def test_file_name(mpi_tmpdir):
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
@@ -35,7 +33,6 @@ MPI_TMPDIR_TEST_CODE = """
 MPI_TMP_PATH_TEST_CODE = """
     import pytest
 
-    @pytest.mark.mpi
     def test_file_name(mpi_tmp_path):
         from mpi4py import MPI
         comm = MPI.COMM_WORLD
