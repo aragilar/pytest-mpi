@@ -130,7 +130,7 @@ class MPIPlugin(object):
                     pytest.fail("MPI tests require that mpi4py be installed")
                 comm = MPI.COMM_WORLD
                 min_size = mark.kwargs.get('min_size')
-                if min_size is not None and comm.size > min_size:
+                if min_size is not None and comm.size < min_size:
                     pytest.skip(
                         "Test requires {} MPI processes, only {} MPI "
                         "processes specified, skipping test"

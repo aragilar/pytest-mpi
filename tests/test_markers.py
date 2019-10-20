@@ -26,6 +26,13 @@ MPI_TEST_CODE = """
 
         assert comm.size >= 2
 
+    @pytest.mark.mpi(min_size=4)
+    def test_size_min_4():
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+
+        assert comm.size >= 4
+
     @pytest.mark.mpi(2)
     def test_size_fail_pos():
         from mpi4py import MPI
@@ -76,7 +83,7 @@ def test_mpi(testdir):
 
     result = testdir.runpytest()
 
-    result.assert_outcomes(skipped=3, passed=1)
+    result.assert_outcomes(skipped=4, passed=1)
 
 
 def test_mpi_with_mpi(testdir):
@@ -85,9 +92,9 @@ def test_mpi_with_mpi(testdir):
     result = run_under_mpi(testdir, "--with-mpi")
 
     if mpi4py is None:
-        result.assert_outcomes(passed=1, error=3)
+        result.assert_outcomes(passed=1, error=4)
     else:
-        result.assert_outcomes(passed=3, error=1)
+        result.assert_outcomes(passed=3, error=1, skipped=1)
 
 
 def test_mpi_only_mpi(testdir):
@@ -96,9 +103,9 @@ def test_mpi_only_mpi(testdir):
     result = run_under_mpi(testdir, "--only-mpi")
 
     if mpi4py is None:
-        result.assert_outcomes(error=3, skipped=1)
+        result.assert_outcomes(error=4, skipped=1)
     else:
-        result.assert_outcomes(passed=2, error=1, skipped=1)
+        result.assert_outcomes(passed=2, error=1, skipped=2)
 
 
 def test_mpi_skip(testdir):
