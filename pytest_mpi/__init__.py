@@ -44,6 +44,8 @@ class MPIPlugin(object):
     pytest plugin to assist with testing MPI-using code
     """
 
+    _is_testing_mpi = False
+
     def _testing_mpi(self, config):
         """
         Return if we're testing with MPI or not.
