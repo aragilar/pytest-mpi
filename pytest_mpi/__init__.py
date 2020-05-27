@@ -44,6 +44,8 @@ class MPIPlugin(object):
     pytest plugin to assist with testing MPI-using code
     """
 
+    _is_testing_mpi = False
+
     def _testing_mpi(self, config):
         """
         Return if we're testing with MPI or not.
@@ -59,6 +61,12 @@ class MPIPlugin(object):
         for label, marker in MPI_MARKERS.items():
             if label in item.keywords:
                 item.add_marker(marker)
+
+    def pytest_configure(self, config):
+        """
+        Hook setting config object (always called at least once)
+        """
+        self._is_testing_mpi = self._testing_mpi(config)
 
     def pytest_collection_modifyitems(self, config, items):
         """
@@ -80,12 +88,12 @@ class MPIPlugin(object):
                     pytest.mark.skip(reason="need --with-mpi option to run")
                 )
 
-    def pytest_terminal_summary(self, terminalreporter, exitstatus, config):
+    def pytest_terminal_summary(self, terminalreporter, exitstatus, *args):
         """
         Hook for printing MPI info at the end of the run
         """
         # pylint: disable=unused-argument
-        if self._testing_mpi(config):
+        if self._is_testing_mpi:
             terminalreporter.section("MPI Information")
             try:
                 from mpi4py import MPI, rc, get_config
