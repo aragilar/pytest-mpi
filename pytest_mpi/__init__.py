@@ -133,7 +133,8 @@ class MPIPlugin(object):
                 if min_size is not None and comm.size < min_size:
                     pytest.skip(
                         "Test requires {} MPI processes, only {} MPI "
-                        "processes specified, skipping test"
+                        "processes specified, skipping "
+                        "test".format(min_size, comm.size)
                     )
 
 
