@@ -2,6 +2,7 @@ include versioneer.py pytest_mpi/_version.py
 include README.md
 include pypi-intro.rst
 include LICENSE.txt CONTRIBUTING.md code_of_conduct.md
+include known_broken_constraints.txt
 recursive-include docs *
 recursive-exclude docs/_build *
 include doc-requirements.txt
