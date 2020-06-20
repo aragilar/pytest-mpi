@@ -28,6 +28,10 @@ for more information about tox, but the simplest method is to run::
 
 in the top level of the git repository.
 
+.. note::
+    If you want to run pytest directly, remember to include ``-p pytester``, as
+    pytester needs to be manually activated.
+
 .. _tox: https://tox.readthedocs.io/en/latest/
 
 Making a release
