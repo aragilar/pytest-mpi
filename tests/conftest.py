@@ -1,11 +1,11 @@
-from logging import getLogger
+from shutil import which
 
 import py
 import pytest
 from _pytest.pytester import Testdir
 
-log = getLogger(__name__)
-MPI_ARGS = ("mpirun", "-n")
+MPI_PATH = which("mpirun")
+MPI_ARGS = (MPI_PATH, "-n")
 
 
 @pytest.fixture
@@ -22,7 +22,8 @@ class MPITestdir(Testdir):
         super().__init__(request, tmpdir_factory)
         method = self.request.config.getoption("--runpytest")
         if method == "inprocess":
-            log.warn("To run the MPI tests, you need to use subprocesses")
+            raise RuntimeError("To run the MPI tests, you need to use subprocesses")
+        print("Path to mpirun is", MPI_PATH)
 
     def runpytest_subprocess(
         self, *args, timeout=60, mpi_procs=2, max_retries=5
@@ -35,6 +36,10 @@ class MPITestdir(Testdir):
             prefix="runpytest-", keep=None, rootdir=self.tmpdir
         )
         args = ("--basetemp=%s" % p,) + args
+        print(self.run(*(
+            self._getpytestargs()[:1] + (
+                '-c', "import site; print(site.getusersitepackages()); import sys; print(sys.path)"
+            ))).stdout)
         plugins = [x for x in self.plugins if isinstance(x, str)]
         if plugins:
             args = ("-p", plugins[0]) + args

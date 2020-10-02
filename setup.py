@@ -25,7 +25,7 @@ setup(
     url = "https://pytest-mpi.readthedocs.io",
     entry_points = {
         'pytest11': [
-            'name_of_plugin = pytest_mpi',
+            'pytest_mpi = pytest_mpi',
         ]
     },
     classifiers=[
