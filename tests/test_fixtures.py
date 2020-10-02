@@ -1,3 +1,5 @@
+from pytest_mpi._helpers import _fix_plural
+
 MPI_FILE_NAME_TEST_CODE = """
     import pytest
 
@@ -56,7 +58,7 @@ def test_mpi_file_name(mpi_testdir, has_mpi4py):
     if has_mpi4py:
         result.assert_outcomes(passed=1)
     else:
-        result.assert_outcomes(error=1)
+        result.assert_outcomes(**_fix_plural(errors=1))
 
 
 def test_mpi_tmpdir(mpi_testdir, has_mpi4py):
@@ -67,7 +69,7 @@ def test_mpi_tmpdir(mpi_testdir, has_mpi4py):
     if has_mpi4py:
         result.assert_outcomes(passed=1)
     else:
-        result.assert_outcomes(error=1)
+        result.assert_outcomes(**_fix_plural(errors=1))
 
 
 def test_mpi_tmp_path(mpi_testdir, has_mpi4py):
@@ -78,4 +80,4 @@ def test_mpi_tmp_path(mpi_testdir, has_mpi4py):
     if has_mpi4py:
         result.assert_outcomes(passed=1)
     else:
-        result.assert_outcomes(error=1)
+        result.assert_outcomes(**_fix_plural(errors=1))
