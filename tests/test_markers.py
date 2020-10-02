@@ -67,9 +67,9 @@ def test_mpi_with_mpi(mpi_testdir, has_mpi4py):
     result = mpi_testdir.runpytest("--with-mpi")
 
     if has_mpi4py:
-        result.assert_outcomes(passed=3, error=1, skipped=1)
+        result.assert_outcomes(passed=3, errors=1, skipped=1)
     else:
-        result.assert_outcomes(passed=1, error=4)
+        result.assert_outcomes(passed=1, errors=4)
 
 
 def test_mpi_only_mpi(mpi_testdir, has_mpi4py):
@@ -78,9 +78,9 @@ def test_mpi_only_mpi(mpi_testdir, has_mpi4py):
     result = mpi_testdir.runpytest("--only-mpi")
 
     if has_mpi4py:
-        result.assert_outcomes(passed=2, error=1, skipped=2)
+        result.assert_outcomes(passed=2, errors=1, skipped=2)
     else:
-        result.assert_outcomes(error=4, skipped=1)
+        result.assert_outcomes(errors=4, skipped=1)
 
 
 def test_mpi_skip(testdir):
