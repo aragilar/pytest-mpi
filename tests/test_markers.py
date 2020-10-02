@@ -2,6 +2,7 @@ from pytest_mpi._helpers import _fix_plural
 
 MPI_TEST_CODE = """
     import pytest
+    import sys; print(sys.path)
 
     @pytest.mark.mpi
     def test_size():
@@ -36,6 +37,7 @@ MPI_TEST_CODE = """
 """
 MPI_SKIP_TEST_CODE = """
     import pytest
+    import sys; print(sys.path)
 
     @pytest.mark.mpi_skip
     def test_skip():
@@ -43,6 +45,7 @@ MPI_SKIP_TEST_CODE = """
 """
 MPI_XFAIL_TEST_CODE = """
     import pytest
+    import sys; print(sys.path)
 
     @pytest.mark.mpi_xfail
     def test_xfail():

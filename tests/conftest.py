@@ -1,10 +1,12 @@
 from logging import getLogger
+from shutil import which
 import sys
 
 import py
 import pytest
 
 log = getLogger(__name__)
+MPI_PATH = which("mpirun")
 MPI_ARGS = ("mpirun", "-n")
 PYTEST_ARGS = (sys.executable, "-mpytest")
 
@@ -32,6 +34,7 @@ class MPITestdir(object):
         method = request.config.getoption("--runpytest")
         if method == "inprocess":
             log.warn("To run the MPI tests, you need to use subprocesses")
+        log.debug("Path to mpirun is", MPI_PATH)
         self._pytester = None
         self._testdir = None
         self._setup(request, config)
