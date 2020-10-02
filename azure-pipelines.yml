@@ -1,0 +1,80 @@
+# from matplotlib's azure setup
+
+schedules:
+  - cron: "0 0 * * 4"
+    displayName: Weekly build
+    branches:
+      include:
+        - releases/*
+    always: true
+
+trigger:
+  tags:
+    include:
+      - "*"
+  branches:
+    include:
+      - "*"
+
+variables:
+  PIP_CACHE_DIR: $(Pipeline.Workspace)/cache/pip
+
+jobs:
+  - job: "static_checks"
+    pool:
+      vmImage: ubuntu-16.04
+    variables:
+      TOXENV: flake8,pylint,docs,check-manifest,checkreadme
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+          architecture: "x64"
+      - script: |
+          pip install tox
+        displayName: Install tox
+      - script: |
+          tox
+        displayName: tox
+
+  - job: "ubuntu1604"
+    pool:
+      vmImage: ubuntu-16.04
+    strategy:
+      matrix:
+        py37:
+          python.version: "3.7"
+          TOXENV: py37
+        py38:
+          python.version: "3.8"
+          TOXENV: py38
+        py39:
+          python.version: "3.9"
+          TOXENV: py39
+      maxParallel: 4
+
+    steps:
+      - template: ci/azure-pipelines-steps.yml
+        parameters:
+          platform: linux
+
+  - job: "macOS1015"
+    pool:
+      vmImage: macOS-10.15
+    strategy:
+      matrix:
+        py37:
+          python.version: "3.7"
+          TOXENV: py37
+        py38:
+          python.version: "3.8"
+          TOXENV: py38
+        py39:
+          python.version: "3.9"
+          TOXENV: py39
+      maxParallel: 4
+
+    steps:
+      - template: ci/azure-pipelines-steps.yml
+        parameters:
+          platform: macos

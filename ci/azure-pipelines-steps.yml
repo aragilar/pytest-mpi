@@ -1,0 +1,38 @@
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "$(python.version)"
+      architecture: "x64"
+    displayName: "Use Python $(python.version)"
+    condition: and(succeeded(), ne(variables['python.version'], 'Pre'))
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install tox codecov twine wheel
+    displayName: "Install pip dependencies"
+
+  - task: TwineAuthenticate@0
+    inputs:
+      externalFeeds: "pypi"
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+
+  - script: env
+    displayName: "print env"
+
+  - script: |
+      tox
+    displayName: "tox"
+
+  #- script: |
+  #    codecov
+  #  displayName: 'codecov'
+  # hopefully the bash uploader will work
+  - script: |
+      bash <(curl -s https://codecov.io/bash)
+    displayName: "Upload to codecov.io"
+
+  - script: |
+      python setup.py sdist bdist_wheel
+      twine upload --skip-existing -r pypi --config-file $(PYPIRC_PATH) dist/*
+    displayName: "Upload to PyPI"
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
