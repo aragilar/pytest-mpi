@@ -44,23 +44,13 @@ jobs:
       matrix:
         py37:
           python.version: "3.7"
-          TOXENV: py37
+          TOXENV: py37,py37-mpi
         py38:
           python.version: "3.8"
-          TOXENV: py38
+          TOXENV: py38,py38-mpi
         py39:
           python.version: "3.9"
-          TOXENV: py39
-        py37-mpi:
-          python.version: "3.7"
-          TOXENV: py37-mpi
-        py38-mpi:
-          python.version: "3.8"
-          TOXENV: py38-mpi
-        py39-mpi:
-          python.version: "3.9"
-          TOXENV: py39-mpi
-      maxParallel: 4
+          TOXENV: py39,py39-mpi
 
     steps:
       - template: ci/azure-pipelines-steps.yml
