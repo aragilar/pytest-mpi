@@ -1,5 +1,7 @@
 import codecs
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
+
 import versioneer
 
 DESCRIPTION_FILES = ["pypi-intro.rst"]
