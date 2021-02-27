@@ -51,12 +51,22 @@ jobs:
         py39:
           python.version: "3.9"
           TOXENV: py39
+        py37-mpi:
+          python.version: "3.7"
+          TOXENV: py37-mpi
+        py38-mpi:
+          python.version: "3.8"
+          TOXENV: py38-mpi
+        py39-mpi:
+          python.version: "3.9"
+          TOXENV: py39-mpi
       maxParallel: 4
 
     steps:
       - template: ci/azure-pipelines-steps.yml
         parameters:
           platform: linux
+          installer: apt
 
   - job: "macOS1015"
     pool:
@@ -72,9 +82,19 @@ jobs:
         py39:
           python.version: "3.9"
           TOXENV: py39
+        py37-mpi:
+          python.version: "3.7"
+          TOXENV: py37-mpi
+        py38-mpi:
+          python.version: "3.8"
+          TOXENV: py38-mpi
+        py39-mpi:
+          python.version: "3.9"
+          TOXENV: py39-mpi
       maxParallel: 4
 
     steps:
       - template: ci/azure-pipelines-steps.yml
         parameters:
           platform: macos
+          installer: brew
