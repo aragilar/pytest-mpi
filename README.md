@@ -1,5 +1,4 @@
 [![Documentation Status](https://readthedocs.org/projects/pytest-mpi/badge/?version=latest)](http://pytest-mpi.readthedocs.org/en/latest/?badge=latest)
-[![Build Status](https://travis-ci.org/aragilar/pytest-mpi.svg?branch=master)](https://travis-ci.org/aragilar/pytest-mpi)
 [![Coverage Status](https://codecov.io/github/aragilar/pytest-mpi/coverage.svg?branch=master)](https://codecov.io/github/aragilar/pytest-mpi?branch=master)
 [![Version](https://img.shields.io/pypi/v/pytest-mpi.svg)](https://pypi.python.org/pypi/pytest-mpi/)
 [![License](https://img.shields.io/pypi/l/pytest-mpi.svg)](https://pypi.python.org/pypi/pytest-mpi/)
