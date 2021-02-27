@@ -1,10 +1,10 @@
+import codecs
 from setuptools import setup, find_packages
 import versioneer
 
 DESCRIPTION_FILES = ["pypi-intro.rst"]
 
 long_description = []
-import codecs
 for filename in DESCRIPTION_FILES:
     with codecs.open(filename, 'r', 'utf-8') as f:
         long_description.append(f.read())
@@ -13,17 +13,17 @@ long_description = "\n".join(long_description)
 setup(
     name="pytest-mpi",
     version=versioneer.get_version(),
-    packages = find_packages('src'),
-    package_dir = {'': 'src'},
-    install_requires = ["pytest"],
-    author = "James Tocknell",
-    author_email = "aragilar@gmail.com",
-    description = "pytest plugin to collect information from tests",
-    long_description = long_description,
-    license = "3-clause BSD",
-    keywords = "pytest testing",
-    url = "https://pytest-mpi.readthedocs.io",
-    entry_points = {
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    install_requires=["pytest"],
+    author="James Tocknell",
+    author_email="aragilar@gmail.com",
+    description="pytest plugin to collect information from tests",
+    long_description=long_description,
+    license="3-clause BSD",
+    keywords="pytest testing",
+    url="https://pytest-mpi.readthedocs.io",
+    entry_points={
         'pytest11': [
             'name_of_plugin = pytest_mpi',
         ]
