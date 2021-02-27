@@ -57,6 +57,7 @@ jobs:
       - template: ci/azure-pipelines-steps.yml
         parameters:
           platform: linux
+          installer: apt
 
   - job: "macOS1015"
     pool:
@@ -78,3 +79,4 @@ jobs:
       - template: ci/azure-pipelines-steps.yml
         parameters:
           platform: macos
+          installer: brew
