@@ -26,11 +26,9 @@ setup(
     license="3-clause BSD",
     keywords="pytest testing",
     url="https://pytest-mpi.readthedocs.io",
-    entry_points={
-        "pytest11": [
-            "name_of_plugin = pytest_mpi",
-        ]
-    },
+    entry_points={"pytest11": [
+        "name_of_plugin = pytest_mpi",
+    ]},
     classifiers=[
         "Framework :: Pytest",
         "Development Status :: 3 - Alpha",
