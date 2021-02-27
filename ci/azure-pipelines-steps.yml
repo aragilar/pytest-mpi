@@ -11,14 +11,14 @@ steps:
     condition: and(succeeded(), ne(variables['python.version'], 'Pre'))
 
   - ${{ if eq(parameters.installer, 'brew') }}:
-    - script: |
-        brew install open-mpi
-      displayName: 'Install brew dependencies'
+      - script: |
+          brew install open-mpi
+        displayName: "Install brew dependencies"
   - ${{ if eq(parameters.installer, 'apt') }}:
-    - script: |
-        sudo apt-get update
-        sudo apt-get install openmpi-bin libopenmpi-dev
-      displayName: 'Install apt dependencies'
+      - script: |
+          sudo apt-get update
+          sudo apt-get install openmpi-bin libopenmpi-dev
+        displayName: "Install apt dependencies"
 
   - script: |
       python -m pip install --upgrade pip
