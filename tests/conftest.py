@@ -85,7 +85,7 @@ class MPITestdir(object):
         retries = 0
         p = _to_pathlib(py.path.local.make_numbered_dir(
             prefix="runpytest-", keep=None,
-            rootdir=_to_py_path(self._pytester.tmpdir)
+            rootdir=_to_py_path(self._pytester.path)
         ))
         args = ("--basetemp=%s" % p,) + args
         plugins = [x for x in self._pytester.plugins if isinstance(x, str)]
