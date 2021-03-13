@@ -235,7 +235,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "mpi_xfail: Tests that fail when run under MPI/mpirun"
     )
-    config.pluginmanager.register(MPIPlugin(), "pytest_mpi")
+    config.pluginmanager.register(MPIPlugin())
 
 
 def pytest_addoption(parser):
