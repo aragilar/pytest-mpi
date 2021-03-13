@@ -44,22 +44,22 @@ jobs:
       matrix:
         py37:
           python.version: "3.7"
-          TOXENV: py37
+          TOXENV: py37,py37-oldpt
         py38:
           python.version: "3.8"
-          TOXENV: py38
+          TOXENV: py38,py38-oldpt
         py39:
           python.version: "3.9"
-          TOXENV: py39
+          TOXENV: py39,py39-oldpt
         py37-mpi:
           python.version: "3.7"
-          TOXENV: py37-mpi
+          TOXENV: py37-mpi,py37-mpi-oldpt
         py38-mpi:
           python.version: "3.8"
-          TOXENV: py38-mpi
+          TOXENV: py38-mpi,py38-mpi-oldpt
         py39-mpi:
           python.version: "3.9"
-          TOXENV: py39-mpi
+          TOXENV: py39-mpi,py39-mpi-oldpt
       maxParallel: 4
 
     steps:
