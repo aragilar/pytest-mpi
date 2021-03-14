@@ -60,7 +60,24 @@ jobs:
         py39-mpi:
           python.version: "3.9"
           TOXENV: py39-mpi
-      maxParallel: 4
+        py37-oldpt:
+          python.version: "3.7"
+          TOXENV: py37-oldpt
+        py38-oldpt:
+          python.version: "3.8"
+          TOXENV: py38-oldpt
+        py39-oldpt:
+          python.version: "3.9"
+          TOXENV: py39-oldpt
+        py37-mpi-oldpt:
+          python.version: "3.7"
+          TOXENV: py37-mpi-oldpt
+        py38-mpi-oldpt:
+          python.version: "3.8"
+          TOXENV: py38-mpi-oldpt
+        py39-mpi-oldpt:
+          python.version: "3.9"
+          TOXENV: py39-mpi-oldpt
 
     steps:
       - template: ci/azure-pipelines-steps.yml
