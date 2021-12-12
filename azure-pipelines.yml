@@ -75,9 +75,6 @@ jobs:
         py39-oldpt:
           python.version: "3.9"
           TOXENV: py39-oldpt
-        py310-oldpt:
-          python.version: "3.10"
-          TOXENV: py310-oldpt
         py37-mpi-oldpt:
           python.version: "3.7"
           TOXENV: py37-mpi-oldpt
@@ -87,9 +84,6 @@ jobs:
         py39-mpi-oldpt:
           python.version: "3.9"
           TOXENV: py39-mpi-oldpt
-        py310-mpi-oldpt:
-          python.version: "3.10"
-          TOXENV: py310-mpi-oldpt
 
     steps:
       - template: ci/azure-pipelines-steps.yml
