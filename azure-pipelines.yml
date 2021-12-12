@@ -22,7 +22,7 @@ variables:
 jobs:
   - job: "static_checks"
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     variables:
       TOXENV: flake8,pylint,docs,check-manifest,checkreadme
     steps:
@@ -37,9 +37,9 @@ jobs:
           tox
         displayName: tox
 
-  - job: "ubuntu1604"
+  - job: "ubuntu2004"
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     strategy:
       matrix:
         py37:
@@ -51,6 +51,9 @@ jobs:
         py39:
           python.version: "3.9"
           TOXENV: py39
+        py310:
+          python.version: "3.10"
+          TOXENV: py310
         py37-mpi:
           python.version: "3.7"
           TOXENV: py37-mpi
@@ -60,6 +63,9 @@ jobs:
         py39-mpi:
           python.version: "3.9"
           TOXENV: py39-mpi
+        py310-mpi:
+          python.version: "3.10"
+          TOXENV: py310-mpi
         py37-oldpt:
           python.version: "3.7"
           TOXENV: py37-oldpt

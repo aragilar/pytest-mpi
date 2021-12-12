@@ -61,7 +61,7 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=useless-object-inheritance,no-self-use,import-outside-toplevel,no-member,invalid-name
+disable=useless-object-inheritance,no-self-use,import-outside-toplevel,no-member,invalid-name,consider-using-f-string
 
 
 [SIMILARITIES]
