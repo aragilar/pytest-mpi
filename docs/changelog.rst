@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.6
+---
+* Again no codebase changes, testing/CI and packaging fixes only.
+* Update Azure Pipelines to use latest images (so CI runs again)
+* Update versioneer to work on future Python versions.
+* Fix doctests infrastructure 
+
 0.5
 ---
 * No codebase changes, only testing/CI changes needed to support pytest 6.
