@@ -241,11 +241,12 @@ def pytest_addoption(parser):
     """
     Add pytest-mpi options to pytest cli
     """
-    parser.addoption(
+    group = parser.getgroup("mpi", description="support for MPI-enabled code")
+    group.addoption(
         WITH_MPI_ARG, action="store_true", default=False,
         help="Run MPI tests, this should be paired with mpirun."
     )
-    parser.addoption(
+    group.addoption(
         ONLY_MPI_ARG, action="store_true", default=False,
         help="Run *only* MPI tests, this should be paired with mpirun."
     )
