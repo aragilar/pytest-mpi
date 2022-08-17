@@ -270,5 +270,5 @@ def pytest_addoption(parser):
     )
     group.addoption(
         UNMUTE_NONZERO_RANKS_ARG, action="store_true", default=False,
-        help="Suppress all output from ranks that are not 0."
+        help="Show all output from all ranks, not just zero."
     )
