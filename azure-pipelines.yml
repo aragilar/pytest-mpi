@@ -22,7 +22,7 @@ variables:
 jobs:
   - job: "static_checks"
     pool:
-      vmImage: ubuntu-20.04
+      vmImage: ubuntu-22.04
     variables:
       TOXENV: flake8,pylint,docs,check-manifest,checkreadme
     steps:
@@ -37,9 +37,9 @@ jobs:
           tox
         displayName: tox
 
-  - job: "ubuntu2004"
+  - job: "ubuntu2204"
     pool:
-      vmImage: ubuntu-20.04
+      vmImage: ubuntu-22.04
     strategy:
       matrix:
         py37:
