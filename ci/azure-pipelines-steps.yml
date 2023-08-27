@@ -22,7 +22,7 @@ steps:
 
   - script: |
       python -m pip install --upgrade pip
-      pip install tox codecov twine wheel
+      pip install tox codecov twine wheel coveralls
     displayName: "Install pip dependencies"
 
   - task: TwineAuthenticate@0
@@ -41,9 +41,13 @@ steps:
   #    codecov
   #  displayName: 'codecov'
   # hopefully the bash uploader will work
+#  - script: |
+#      bash <(curl -s https://codecov.io/bash)
+#    displayName: "Upload to codecov.io"
+
   - script: |
-      bash <(curl -s https://codecov.io/bash)
-    displayName: "Upload to codecov.io"
+      coveralls
+    displayName: 'coveralls'
 
   - script: |
       python setup.py sdist bdist_wheel

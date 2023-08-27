@@ -1,5 +1,3 @@
 status = [
   "aragilar.pytest-mpi",
-  "codecov/patch",
-  "codecov/project",
 ]
