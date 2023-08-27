@@ -45,6 +45,7 @@ class MPIPlugin(object):
     """
 
     _is_testing_mpi = False
+    _should_be_muted = False
 
     def _testing_mpi(self, config):
         """
@@ -54,6 +55,15 @@ class MPIPlugin(object):
         only_mpi = config.getoption(ONLY_MPI_ARG)
         return with_mpi or only_mpi
 
+    def _should_mute(self, config):
+        """
+        Return if we should mute the output or not.
+        """
+        unmute = config.getoption(UNMUTE_NONZERO_RANKS_ARG)
+        testing_mpi = self._testing_mpi(config)
+
+        return testing_mpi and not unmute
+
     def _add_markers(self, item):
         """
         Add markers to tests when run under MPI.
@@ -62,11 +72,30 @@ class MPIPlugin(object):
             if label in item.keywords:
                 item.add_marker(marker)
 
+    def manage_reporting(self, config):
+        """
+        Configure pytest output in this process based on user
+        settings/arguments.
+        """
+        if self._should_be_muted:
+            try:
+                from mpi4py import MPI
+            except ImportError:
+                return
+
+            if MPI.COMM_WORLD.Get_rank() != 0:
+                # unregister the standard reporter for all nonzero ranks
+                standard_reporter = config.pluginmanager.getplugin(
+                    'terminalreporter'
+                )
+                config.pluginmanager.unregister(standard_reporter)
+
     def pytest_configure(self, config):
         """
         Hook setting config object (always called at least once)
         """
         self._is_testing_mpi = self._testing_mpi(config)
+        self._should_be_muted = self._should_mute(config)
 
     def pytest_collection_modifyitems(self, config, items):
         """
@@ -238,21 +267,7 @@ def pytest_configure(config):
     )
     mpi = MPIPlugin()
     config.pluginmanager.register(mpi)
-
-    # check whether to mute output
-    unmute = config.getoption(UNMUTE_NONZERO_RANKS_ARG)
-    if mpi._is_testing_mpi and not unmute:
-        try:
-            from mpi4py import MPI
-        except ImportError:
-            return
-
-        if MPI.COMM_WORLD.Get_rank() != 0:
-            # unregister the standard reporter for all nonzero ranks
-            standard_reporter = config.pluginmanager.getplugin(
-                'terminalreporter'
-            )
-            config.pluginmanager.unregister(standard_reporter)
+    mpi.manage_reporting(config)
 
 
 def pytest_addoption(parser):
