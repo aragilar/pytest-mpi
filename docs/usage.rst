@@ -37,3 +37,7 @@ also specify a minimum number of processes required to run the test:
 There are also `mpi_skip`, for when a test should not be run under MPI (e.g. it
 causes a lockup or segmentation fault), and `mpi_xfail`, for when a test should
 succeed when run normally, but fail when run under MPI.
+
+.. note::
+   By default, only the output from rank 0 will be shown in the terminal. To
+   bypass this, pass the option `--unmute-ranks`.

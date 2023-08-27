@@ -13,6 +13,7 @@ __version__ = _version.get_versions()['version']
 
 WITH_MPI_ARG = "--with-mpi"
 ONLY_MPI_ARG = "--only-mpi"
+UNMUTE_NONZERO_RANKS_ARG = "--unmute-ranks"
 
 
 class MPIMarkerEnum(str, Enum):
@@ -44,6 +45,7 @@ class MPIPlugin(object):
     """
 
     _is_testing_mpi = False
+    _should_be_muted = False
 
     def _testing_mpi(self, config):
         """
@@ -53,6 +55,15 @@ class MPIPlugin(object):
         only_mpi = config.getoption(ONLY_MPI_ARG)
         return with_mpi or only_mpi
 
+    def _should_mute(self, config):
+        """
+        Return if we should mute the output or not.
+        """
+        unmute = config.getoption(UNMUTE_NONZERO_RANKS_ARG)
+        testing_mpi = self._testing_mpi(config)
+
+        return testing_mpi and not unmute
+
     def _add_markers(self, item):
         """
         Add markers to tests when run under MPI.
@@ -61,11 +72,30 @@ class MPIPlugin(object):
             if label in item.keywords:
                 item.add_marker(marker)
 
+    def manage_reporting(self, config):
+        """
+        Configure pytest output in this process based on user
+        settings/arguments.
+        """
+        if self._should_be_muted:
+            try:
+                from mpi4py import MPI
+            except ImportError:
+                return
+
+            if MPI.COMM_WORLD.Get_rank() != 0:
+                # unregister the standard reporter for all nonzero ranks
+                standard_reporter = config.pluginmanager.getplugin(
+                    'terminalreporter'
+                )
+                config.pluginmanager.unregister(standard_reporter)
+
     def pytest_configure(self, config):
         """
         Hook setting config object (always called at least once)
         """
         self._is_testing_mpi = self._testing_mpi(config)
+        self._should_be_muted = self._should_mute(config)
 
     def pytest_collection_modifyitems(self, config, items):
         """
@@ -217,6 +247,7 @@ def mpi_tmp_path(tmp_path):
     return Path(name)
 
 
+@pytest.mark.trylast
 def pytest_configure(config):
     """
     Add pytest-mpi to pytest (see pytest docs for more info)
@@ -234,7 +265,9 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "mpi_xfail: Tests that fail when run under MPI/mpirun"
     )
-    config.pluginmanager.register(MPIPlugin())
+    mpi = MPIPlugin()
+    config.pluginmanager.register(mpi)
+    mpi.manage_reporting(config)
 
 
 def pytest_addoption(parser):
@@ -249,4 +282,8 @@ def pytest_addoption(parser):
     group.addoption(
         ONLY_MPI_ARG, action="store_true", default=False,
         help="Run *only* MPI tests, this should be paired with mpirun."
+    )
+    group.addoption(
+        UNMUTE_NONZERO_RANKS_ARG, action="store_true", default=False,
+        help="Show all output from all ranks, not just zero."
     )
