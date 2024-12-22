@@ -13,6 +13,7 @@ __version__ = _version.get_versions()['version']
 
 WITH_MPI_ARG = "--with-mpi"
 ONLY_MPI_ARG = "--only-mpi"
+UNMUTE_NONZERO_RANKS_ARG = "--unmute-ranks"
 
 
 class MPIMarkerEnum(str, Enum):
@@ -217,6 +218,7 @@ def mpi_tmp_path(tmp_path):
     return Path(name)
 
 
+@pytest.mark.trylast
 def pytest_configure(config):
     """
     Add pytest-mpi to pytest (see pytest docs for more info)
@@ -234,7 +236,23 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "mpi_xfail: Tests that fail when run under MPI/mpirun"
     )
-    config.pluginmanager.register(MPIPlugin())
+    mpi = MPIPlugin()
+    config.pluginmanager.register(mpi)
+
+    # check whether to mute output
+    unmute = config.getoption(UNMUTE_NONZERO_RANKS_ARG)
+    if mpi._is_testing_mpi and not unmute:
+        try:
+            from mpi4py import MPI
+        except ImportError:
+            return
+
+        if MPI.COMM_WORLD.Get_rank() != 0:
+            # unregister the standard reporter for all nonzero ranks
+            standard_reporter = config.pluginmanager.getplugin(
+                'terminalreporter'
+            )
+            config.pluginmanager.unregister(standard_reporter)
 
 
 def pytest_addoption(parser):
@@ -249,4 +267,8 @@ def pytest_addoption(parser):
     group.addoption(
         ONLY_MPI_ARG, action="store_true", default=False,
         help="Run *only* MPI tests, this should be paired with mpirun."
+    )
+    group.addoption(
+        UNMUTE_NONZERO_RANKS_ARG, action="store_true", default=False,
+        help="Show all output from all ranks, not just zero."
     )
